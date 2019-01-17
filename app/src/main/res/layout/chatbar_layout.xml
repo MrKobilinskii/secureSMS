@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/Black"/>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+
+        android:background="@color/colorPrimaryLight">
+        <EditText
+            android:id="@+id/write_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Введите сообщение"
+            android:textSize="18dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center"
+            android:textColor="@color/Black"
+            android:layout_marginLeft="10dp"
+            android:background="@color/colorPrimary"
+            android:layout_weight="1" />
+
+        <RelativeLayout
+            android:layout_width="46dp"
+            android:layout_height="match_parent">
+            <ImageButton
+                android:id="@+id/send_Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_send_black_24dp"
+                android:backgroundTint="@color/colorPrimary"
+                android:layout_alignParentBottom="true"
+                android:elevation="5dp"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</LinearLayout>
