@@ -11,7 +11,7 @@ import com.develop.daniil.securesms.R;
 import java.util.ArrayList;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> {
-    ArrayList<messageRight> messages;
+    ArrayList<message> messages;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -20,11 +20,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         // each data item is just a string in this case
         public TextView text, time;
 
-        public MyViewHolder(View messageRight) {
-            super(messageRight);
-            messageRight.setOnClickListener(this); //Need for CLICK
-            text = messageRight.findViewById(R.id.text);
-            time = messageRight.findViewById(R.id.time);
+        public MyViewHolder(View message) {
+            super(message);
+            message.setOnClickListener(this); //Need for CLICK
+            text = message.findViewById(R.id.text_TextView);
+            time = message.findViewById(R.id.time_TextView);
         }
 
         @Override
@@ -36,7 +36,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public ChatAdapter(ArrayList<messageRight> messages) {
+    public ChatAdapter(ArrayList<message> messages) {
         this.messages = messages;
     }
 
@@ -44,9 +44,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     @Override
     public ChatAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View messageRight = LayoutInflater.from(parent.getContext()).inflate(R.layout.rigth_message_model, parent, false);
+        View message = LayoutInflater.from(parent.getContext()).inflate(R.layout.rigth_message_model, parent, false);
 
-        MyViewHolder viewHolder = new MyViewHolder(messageRight);
+        MyViewHolder viewHolder = new MyViewHolder(message);
         return viewHolder;
     }
 

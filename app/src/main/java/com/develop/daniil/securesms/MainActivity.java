@@ -72,15 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.ReceiveSms_RecyclerView);
 
-        messages.add(new message("12","@","2"));
-        messages.add(new message("12","@","2"));
-
-        messages.add(new message("12","@","2"));
-
-        messages.add(new message("12","@","2"));
-
-        messages.add(new message("12","@","2"));
-
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);

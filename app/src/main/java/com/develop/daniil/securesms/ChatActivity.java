@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.develop.daniil.securesms.utils.ChatAdapter;
-import com.develop.daniil.securesms.utils.messageRight;
+import com.develop.daniil.securesms.utils.message;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,7 +22,7 @@ public class ChatActivity extends AppCompatActivity {
 
     ImageView logo; ImageButton newMsg; TextView appName; String number, text, time;
     EditText write_msg; RecyclerView chat_RecyclerView; ImageButton send_Button;
-    ChatAdapter chatAdapter; ArrayList<messageRight> messages = new ArrayList<>();
+    ChatAdapter chatAdapter; ArrayList<message> messages = new ArrayList<>();
     DateFormat dateFormat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +72,8 @@ public class ChatActivity extends AppCompatActivity {
                 Date date = new Date();
                 time = dateFormat.format(date); //текущее Время
 
-                messageRight messageRight = new messageRight(text, time);
-                messages.add(messageRight);
+                message message = new message("", text, time);
+                messages.add(message);
                 chatAdapter.notifyDataSetChanged(); //New message!!!
 
                 chat_RecyclerView.scrollToPosition(messages.size() - 1); //Показать последний месседж в Ресайкл Вью
