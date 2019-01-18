@@ -69,6 +69,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 text = write_msg.getText().toString();
+                write_msg.setText(""); //EditText null
                 Date date = new Date();
                 time = dateFormat.format(date); //текущее Время
 

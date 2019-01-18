@@ -22,7 +22,7 @@
         </activity>
 
         <receiver
-            android:name=".SMSMonitor"
+            android:name=".utils.SMSMonitor"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="999">

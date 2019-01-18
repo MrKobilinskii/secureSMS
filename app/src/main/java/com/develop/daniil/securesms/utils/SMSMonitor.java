@@ -8,6 +8,10 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class SMSMonitor extends BroadcastReceiver {
 
     SmsMessage[] messages;
@@ -61,11 +65,14 @@ public class SMSMonitor extends BroadcastReceiver {
 
     private void sendBundle(Context context){
         Toast.makeText(context, TAG, Toast.LENGTH_SHORT).show();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //Time format
+        String time = dateFormat.format(new Date()); //Put current time
 
         Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("SMS_RECEIVED_ACTION");
         broadcastIntent.putExtra("bodyMsg", bodyMsg);
         broadcastIntent.putExtra("fromAddress", fromAddress);
+        broadcastIntent.putExtra("time", time);
         context.sendBroadcast(broadcastIntent);
     }
 

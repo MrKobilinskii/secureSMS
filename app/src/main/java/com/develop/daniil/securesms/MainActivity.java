@@ -21,10 +21,7 @@ import android.widget.Toast;
 import com.develop.daniil.securesms.utils.MainAdapter;
 import com.develop.daniil.securesms.utils.message;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,12 +42,11 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String bodyMsg = intent.getExtras().getString("bodyMsg");
             String fromAddress = intent.getExtras().getString("fromAddress");
+            String time = intent.getExtras().getString("time");
 
             /*
                 Current time
              */
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            String time = dateFormat.format(new Date());
 
             messages.add(0, new message(fromAddress, bodyMsg, time)); //сообщение вверх стека
             no_mail_textView.setVisibility(View.GONE);
@@ -76,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
         // specify an adapter (see also next example)
-        mainAdapter = new MainAdapter(messages);
+        mainAdapter = new MainAdapter(messages, R.layout.main_message_model);
         recyclerView.setAdapter(mainAdapter);
+
 
 //        String number;
 //                Toast.makeText(getContext(), "Row " + position + " was clicked!", Toast.LENGTH_SHORT).show();

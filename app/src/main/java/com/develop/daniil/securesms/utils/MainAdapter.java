@@ -40,15 +40,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MainAdapter(ArrayList<message> messages) {
+    public MainAdapter(ArrayList<message> messages, int layout) {
         this.messages = messages;
+        this.layout = layout;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public MainAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View message = LayoutInflater.from(parent.getContext()).inflate(R.layout.main_message_model, parent, false);
+        View message = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
         MyViewHolder viewHolder = new MyViewHolder(message);
         return viewHolder;
