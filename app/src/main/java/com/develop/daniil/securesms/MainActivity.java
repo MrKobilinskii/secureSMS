@@ -2,9 +2,11 @@ package com.develop.daniil.securesms;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.develop.daniil.securesms.sql.DBHelper;
 import com.develop.daniil.securesms.utils.MainAdapter;
 import com.develop.daniil.securesms.utils.message;
 
@@ -29,13 +32,11 @@ public class MainActivity extends AppCompatActivity {
     private int MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10;
     long startTime; int temp = 0; //для Стрелки
 
-    SQLiteDatabase database;
-    String fromAddress, bodyMsg;
-    View mView;
     RecyclerView recyclerView; TextView no_mail_textView;
     ArrayList<message> messages = new ArrayList<>();
     MainAdapter mainAdapter;
     ImageButton newMsg;
+    DBHelper dbHelper; SQLiteDatabase database;ContentValues contentValues;
 
     private BroadcastReceiver intentReciever = new BroadcastReceiver() {
         @Override
@@ -43,12 +44,22 @@ public class MainActivity extends AppCompatActivity {
             String bodyMsg = intent.getExtras().getString("bodyMsg");
             String fromAddress = intent.getExtras().getString("fromAddress");
             String time = intent.getExtras().getString("time");
+            String toAddress = "toUser"; //message to Me!
 
             /*
-                Current time
-             */
+             Add msg to SQL
+             todo: findViewbyid in sql. don't push if exists
+            */
+            contentValues.put(DBHelper.KEY_NUMBER, fromAddress);
+            contentValues.put(DBHelper.KEY_TEXT, bodyMsg);
+            contentValues.put(DBHelper.KEY_TIME, time);
 
-            messages.add(0, new message(fromAddress, bodyMsg, time)); //сообщение вверх стека
+            database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
+
+            /*
+                Output on screen
+             */
+            messages.add(0, new message(fromAddress, toAddress, bodyMsg, time)); //сообщение вверх стека
             no_mail_textView.setVisibility(View.GONE);
 
             mainAdapter.notifyDataSetChanged();
@@ -60,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /*
+            Create mySQL
+         */
+        dbHelper = new DBHelper(this);
+        database = dbHelper.getWritableDatabase();
+        contentValues = new ContentValues();
+
+//        database.delete("contacts",null,null);
+        /*
+            for Receive sms
+         */
         intentFilter = new IntentFilter();
         intentFilter.addAction("SMS_RECEIVED_ACTION");
         ActivityCompat.requestPermissions(this,
@@ -68,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.ReceiveSms_RecyclerView);
 
+        /*
+            Work with activity
+         */
         // use a linear layout manager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
@@ -75,15 +100,28 @@ public class MainActivity extends AppCompatActivity {
         mainAdapter = new MainAdapter(messages, R.layout.main_message_model);
         recyclerView.setAdapter(mainAdapter);
 
+        /*
+                Read from SQL
+         */
+        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
 
-//        String number;
-//                Toast.makeText(getContext(), "Row " + position + " was clicked!", Toast.LENGTH_SHORT).show();
-//
-//                number = message.getFromAddress();
-//
-//                Intent intent = new Intent(view.getContext(), ChatActivity.class);
-//                intent.putExtra("number", number); // send Username to Chat
-//                v.getContext().startActivity(intent);
+        if (cursor.moveToFirst()) {
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int numberIndex = cursor.getColumnIndex(DBHelper.KEY_NUMBER);
+            int textIndex = cursor.getColumnIndex(DBHelper.KEY_TEXT);
+            int timeIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
+            do {
+                Log.d("mLog", "ID = " + cursor.getInt(idIndex) +
+                        ", number = " + cursor.getString(numberIndex) +
+                        ", text = " + cursor.getString(textIndex) +
+                        ", time = " + cursor.getString(timeIndex));
+                messages.add(0, new message(cursor.getString(numberIndex), "", cursor.getString(textIndex), cursor.getString(timeIndex))); //сообщение вверх стека
+            } while (cursor.moveToNext());
+        } else
+            Log.d("mLog","0 rows");
+
+        mainAdapter.notifyDataSetChanged();
+        cursor.close();
 
         no_mail_textView = findViewById(R.id.no_mail_textView);
         if(messages.size() == 0){

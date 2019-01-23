@@ -5,44 +5,48 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="@color/colorPrimary"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <android.support.v7.widget.CardView
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:background="@drawable/chat_triangle_light"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="24dp"
+        />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:layout_marginTop="38dp"
+        android:layout_marginRight="16dp"
         android:layout_alignParentRight="true"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:background="@drawable/chat_rectangle_light"
+        >
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text_TextView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/colorSecondaryLight"
-            >
+            android:layout_weight="1"
+            android:maxEms="10"
+            android:layout_gravity="left"
+            android:gravity="left"
+            android:padding="10dp"
+            android:text="123412342314123413241234"
+            android:textColor="@color/Black"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/text_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="8"
-                android:layout_gravity="center"
-                android:gravity="left"
-                android:padding="10dp"
-                android:text="1351212432vcvcvxcvcxvcxvcxvxvxcvxcvxcvxcvxcvxcvcxvvc43223432432423423512351235123512351235"
-                android:textColor="@color/Black"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/time_TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="11.01.2019 12:00"
-                android:textStyle="bold"
-                android:layout_marginBottom="20dp"
-                android:layout_gravity="right"
-                android:layout_marginRight="20dp"
-                />
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/time_TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="11.01.2019 12:00"
+            android:textStyle="bold"
+            android:layout_marginBottom="2dp"
+            android:layout_gravity="left"
+            android:layout_marginLeft="10dp"
+            android:paddingRight="10dp"
+            />
+    </LinearLayout>
 </RelativeLayout>

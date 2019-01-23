@@ -20,7 +20,7 @@ import java.util.Date;
 
 public class ChatActivity extends AppCompatActivity {
 
-    ImageView logo; ImageButton newMsg; TextView appName; String number, text, time;
+    ImageView logo; ImageButton newMsg; TextView appName; String fromAddress, toAddress, text, time;
     EditText write_msg; RecyclerView chat_RecyclerView; ImageButton send_Button;
     ChatAdapter chatAdapter; ArrayList<message> messages = new ArrayList<>();
     DateFormat dateFormat;
@@ -46,12 +46,14 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        number = getIntent().getStringExtra("number"); //Приём номера аддрессата
-        appName.setText(number);
+        toAddress = getIntent().getStringExtra("number"); //Приём номера аддрессата
+        appName.setText(toAddress);
 
         /*
             Work with Activity
          */
+
+        //Todo: take msgs from sql
 
         write_msg = findViewById(R.id.write_msg);
         chat_RecyclerView = findViewById(R.id.chat_RecyclerView);
@@ -72,8 +74,11 @@ public class ChatActivity extends AppCompatActivity {
                 write_msg.setText(""); //EditText null
                 Date date = new Date();
                 time = dateFormat.format(date); //текущее Время
+                fromAddress = "fromUser"; //Message from ME!
 
-                message message = new message("", text, time);
+                message message = new message(fromAddress, toAddress, text, time);
+                //Todo: put msg to SQL
+//                Todo: secure and send message here!
                 messages.add(message);
                 chatAdapter.notifyDataSetChanged(); //New message!!!
 
