@@ -36,33 +36,17 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<message> messages = new ArrayList<>();
     MainAdapter mainAdapter;
     ImageButton newMsg;
-    DBHelper dbHelper; SQLiteDatabase database;ContentValues contentValues;
+    DBHelper dbHelper; SQLiteDatabase database; ContentValues contentValues;
 
     private BroadcastReceiver intentReciever = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String bodyMsg = intent.getExtras().getString("bodyMsg");
-            String fromAddress = intent.getExtras().getString("fromAddress");
-            String time = intent.getExtras().getString("time");
-            String toAddress = "toUser"; //message to Me!
+            String toAddress = intent.getExtras().getString("toUser"); //message to Me!
 
-            /*
-             Add msg to SQL
-             todo: findViewbyid in sql. don't push if exists
-            */
-            contentValues.put(DBHelper.KEY_NUMBER, fromAddress);
-            contentValues.put(DBHelper.KEY_TEXT, bodyMsg);
-            contentValues.put(DBHelper.KEY_TIME, time);
+            messages.clear();
+            readContactsFromSQL();
 
-            database.insert(DBHelper.TABLE_CONTACTS, null, contentValues);
-
-            /*
-                Output on screen
-             */
-            messages.add(0, new message(fromAddress, toAddress, bodyMsg, time)); //сообщение вверх стека
             no_mail_textView.setVisibility(View.GONE);
-
-            mainAdapter.notifyDataSetChanged();
         }
     };
 
@@ -77,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
         contentValues = new ContentValues();
+
 
 //        database.delete("contacts",null,null);
         /*
@@ -103,25 +88,7 @@ public class MainActivity extends AppCompatActivity {
         /*
                 Read from SQL
          */
-        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
-
-        if (cursor.moveToFirst()) {
-            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
-            int numberIndex = cursor.getColumnIndex(DBHelper.KEY_NUMBER);
-            int textIndex = cursor.getColumnIndex(DBHelper.KEY_TEXT);
-            int timeIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
-            do {
-                Log.d("mLog", "ID = " + cursor.getInt(idIndex) +
-                        ", number = " + cursor.getString(numberIndex) +
-                        ", text = " + cursor.getString(textIndex) +
-                        ", time = " + cursor.getString(timeIndex));
-                messages.add(0, new message(cursor.getString(numberIndex), "", cursor.getString(textIndex), cursor.getString(timeIndex))); //сообщение вверх стека
-            } while (cursor.moveToNext());
-        } else
-            Log.d("mLog","0 rows");
-
-        mainAdapter.notifyDataSetChanged();
-        cursor.close();
+        readContactsFromSQL();
 
         no_mail_textView = findViewById(R.id.no_mail_textView);
         if(messages.size() == 0){
@@ -145,7 +112,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        registerReceiver(intentReciever,intentFilter);
+        registerReceiver(intentReciever, intentFilter);
+        messages.clear();
+        readContactsFromSQL();
+        no_mail_textView.setVisibility(View.GONE);
         super.onResume();
     }
 
@@ -166,6 +136,27 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    private void readContactsFromSQL(){
+        /*
+                Read from SQL
+         */
+        Cursor cursor = database.query(DBHelper.TABLE_CONTACTS, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            int idIndex = cursor.getColumnIndex(DBHelper.KEY_ID);
+            int numberIndex = cursor.getColumnIndex(DBHelper.KEY_NUMBER);
+            int textIndex = cursor.getColumnIndex(DBHelper.KEY_TEXT);
+            int timeIndex = cursor.getColumnIndex(DBHelper.KEY_TIME);
+            int typeIndex = cursor.getColumnIndex(DBHelper.KEY_TYPE);
+            do {
+                messages.add(0, new message(cursor.getString(numberIndex), cursor.getString(textIndex), cursor.getString(timeIndex), cursor.getString(typeIndex))); //сообщение вверх стека
+            } while (cursor.moveToNext());
+        } else
+            Log.d("mLog","0 rows");
+
+        mainAdapter.notifyDataSetChanged();
+        cursor.close();
+    }
 
     @Override
     public void onBackPressed() { //Стрелка

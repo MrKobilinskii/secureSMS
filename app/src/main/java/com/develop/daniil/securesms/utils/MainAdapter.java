@@ -1,10 +1,13 @@
 package com.develop.daniil.securesms.utils;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.develop.daniil.securesms.ChatActivity;
@@ -13,21 +16,49 @@ import com.develop.daniil.securesms.R;
 import java.util.ArrayList;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> {
-    ArrayList<message> messages; int layout;
+    ArrayList<message> messages; int layout; AlertDialog.Builder ad;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
-        public TextView fromAddress, text, time;
+        public TextView fromAddress, text, time; public ImageButton deleteButton;
 
-        public MyViewHolder(View message) {
+        public MyViewHolder(final View message, final ArrayList<message> messages) {
             super(message);
             message.setOnClickListener(this); //Need for CLICK
             fromAddress = message.findViewById(R.id.fromAddress_TextView);
             text = message.findViewById(R.id.mainText_TextView);
             time = message.findViewById(R.id.mainTime_TextView);
+            deleteButton = message.findViewById(R.id.deleteContact_Button);
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    /*
+                        Show alert
+                     */
+                    AlertDialog alertDialog = new AlertDialog.Builder(message.getContext()).create();
+                    alertDialog.setTitle("Удаление");
+                    alertDialog.setMessage("Вы хотите удалить диалог?");
+                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Да",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    /*
+                                        delete msg from sql and screen
+                                    */
+
+                                }
+                            });
+                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Отмена",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            });
         }
 
         @Override
@@ -38,6 +69,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
             view.getContext().startActivity(intent);
         }
     }
+
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public MainAdapter(ArrayList<message> messages, int layout) {
@@ -51,7 +83,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
         // create a new view
         View message = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-        MyViewHolder viewHolder = new MyViewHolder(message);
+        MyViewHolder viewHolder = new MyViewHolder(message, messages);
         return viewHolder;
     }
 
@@ -60,7 +92,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     public void onBindViewHolder(MyViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.fromAddress.setText(messages.get(position).getFromAddress());
+        holder.fromAddress.setText(messages.get(position).getNumber());
         holder.text.setText(messages.get(position).getText());
         holder.time.setText(messages.get(position).getTime());
     }

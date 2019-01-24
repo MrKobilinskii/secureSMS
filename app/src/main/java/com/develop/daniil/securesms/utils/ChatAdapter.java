@@ -44,10 +44,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
     @Override
     public ChatAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        View message = LayoutInflater.from(parent.getContext()).inflate(R.layout.rigth_message_model, parent, false);
 
-        MyViewHolder viewHolder = new MyViewHolder(message);
-        return viewHolder;
+        switch (viewType){
+            case 0: {
+                View message = LayoutInflater.from(parent.getContext()).inflate(R.layout.rigth_message_model, parent, false);
+                MyViewHolder viewHolder = new MyViewHolder(message);
+                return viewHolder;
+            }
+            case 1: {
+                View message = LayoutInflater.from(parent.getContext()).inflate(R.layout.left_message_model, parent, false);
+                MyViewHolder viewHolder = new MyViewHolder(message);
+                return viewHolder;
+            }
+        }
+
+        return null;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -57,6 +68,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.MyViewHolder> 
         // - replace the contents of the view with that element
         holder.text.setText(messages.get(position).getText());
         holder.time.setText(messages.get(position).getTime());
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+      if(messages.get(position).getType().equals("receive")){
+          return 1;
+      } else  if (messages.get(position).getType().equals("send")){
+          return 0;
+      }
+
+      return -1;
     }
 
     // Return the size of your dataset (invoked by the layout manager)
