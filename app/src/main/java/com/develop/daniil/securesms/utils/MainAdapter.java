@@ -1,13 +1,11 @@
 package com.develop.daniil.securesms.utils;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.develop.daniil.securesms.ChatActivity;
@@ -23,42 +21,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     // you provide access to all the views for a data item in a view holder
     public static class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
-        public TextView fromAddress, text, time; public ImageButton deleteButton;
+        public TextView fromAddress, text, time;
 
         public MyViewHolder(final View message, final ArrayList<message> messages) {
             super(message);
             message.setOnClickListener(this); //Need for CLICK
+
             fromAddress = message.findViewById(R.id.fromAddress_TextView);
             text = message.findViewById(R.id.mainText_TextView);
             time = message.findViewById(R.id.mainTime_TextView);
-            deleteButton = message.findViewById(R.id.deleteContact_Button);
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    /*
-                        Show alert
-                     */
-                    AlertDialog alertDialog = new AlertDialog.Builder(message.getContext()).create();
-                    alertDialog.setTitle("Удаление");
-                    alertDialog.setMessage("Вы хотите удалить диалог?");
-                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Да",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    /*
-                                        delete msg from sql and screen
-                                    */
-
-                                }
-                            });
-                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Отмена",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                }
-            });
         }
 
         @Override
