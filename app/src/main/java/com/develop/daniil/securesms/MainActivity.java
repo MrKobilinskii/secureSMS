@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
@@ -11,9 +12,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -89,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
                 Read from SQL
          */
         readContactsFromSQL();
+        swipeDelete();
+
+//        swipeDelete swipeDelete = new swipeDelete(getApplicationContext(), messages, mainAdapter, recyclerView);
+//        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(swipeDelete);
+
+
 
         no_mail_textView = findViewById(R.id.no_mail_textView);
         if(messages.size() == 0){
@@ -109,6 +118,53 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    private void swipeDelete(){
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT)
+        {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+                final int position = viewHolder.getAdapterPosition();
+                 /*
+                        Show Attention
+                 */
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this); //alert for confirm to delete
+                builder.setMessage("Удалить диалог?");    //set message
+                builder.setCancelable(false);
+
+                builder.setPositiveButton("УДАЛИТЬ", new DialogInterface.OnClickListener() { //when click on DELETE
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mainAdapter.notifyItemRemoved(position);    //item removed from recylcerview
+                        database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NUMBER + "= ?", new String[]{messages.get(position).getNumber()});
+                        database.delete(DBHelper.TABLE_MESSAGES, DBHelper.KEY_NUMBER + "= ?", new String[]{messages.get(position).getNumber()});
+
+                        messages.remove(position);  //then remove item
+
+                        return;
+                    }
+                }).setNegativeButton("ОТМЕНА", new DialogInterface.OnClickListener() {  //not removing items if cancel is done
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mainAdapter.notifyItemRemoved(position + 1);    //notifies the RecyclerView Adapter that data in adapter has been removed at a particular position.
+                        mainAdapter.notifyItemRangeChanged(position, mainAdapter.getItemCount());   //notifies the RecyclerView Adapter that positions of element in adapter has been changed from position(removed element index to end of list), please update it.
+                        return;
+                    }
+                }).show();  //show alert dialog
+
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+
+    }
 
     @Override
     protected void onResume() {

@@ -68,6 +68,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
         holder.time.setText(messages.get(position).getTime());
     }
 
+    public void setMessages(ArrayList<message> messages) {
+        this.messages = messages;
+    }
+
+    public void delMessages() {
+        this.messages = null;
+    }
+
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
