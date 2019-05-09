@@ -15,7 +15,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NumberActivity extends AppCompatActivity {
 
@@ -362,16 +361,17 @@ public class NumberActivity extends AppCompatActivity {
                 String num = number.getText().toString();
                 num = num.replaceAll("[()]", "");
 
+                num = "5554";
                 intent.putExtra("number", num); // send Username to Chat
 
-                if((number.getText().length() - prefix.length() - 1 > 0) &&(number.getText().length() <= 20)) //Todo: Проверка номера
-                {
+               // if((number.getText().length() - prefix.length() - 1 > 0) &&(number.getText().length() <= 20)) //Todo: Проверка номера
+              //  {
                     finish();
                     startActivity(intent);
-                }
-                else {
-                    Toast.makeText(NumberActivity.this, "Укажите номер в поле ввода", Toast.LENGTH_SHORT).show();
-                }
+             //   }
+              //  else {
+             //       Toast.makeText(NumberActivity.this, "Укажите номер в поле ввода", Toast.LENGTH_SHORT).show();
+             //   }
             }
         });
     }

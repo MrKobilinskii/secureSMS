@@ -27,7 +27,10 @@ import com.develop.daniil.securesms.sql.DBHelper;
 import com.develop.daniil.securesms.utils.MainAdapter;
 import com.develop.daniil.securesms.utils.message;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,7 +68,11 @@ public class MainActivity extends AppCompatActivity {
         database = dbHelper.getWritableDatabase();
         contentValues = new ContentValues();
 
+       // tempFun(); //TODO: Delete this
 
+        //String encryptMessage = ModifyMessage.secure("my msg");
+
+        //String decryptMessage = ModifyMessage.unSecure(encryptMessage);
 //        database.delete("contacts",null,null);
         /*
             for Receive sms
@@ -118,6 +125,41 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void tempFun(){
+
+        ContentValues contentValues1 = new ContentValues();
+//        ContentValues contentValues = new ContentValues();
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //Time format
+        String time = dateFormat.format(new Date()); //Put current time
+        String fromAddress = "+7900231233";
+        String bodyMsg = "Text_Message";
+        /*
+             Add msg to Messages
+            */
+        contentValues.put(DBHelper.MESSAGE_NUMBER, fromAddress);
+        contentValues.put(DBHelper.MESSAGE_TEXT, bodyMsg);
+        contentValues.put(DBHelper.MESSAGE_TIME, time);
+        contentValues.put(DBHelper.MESSAGE_TYPE, "receive");
+
+        database.insert(DBHelper.TABLE_MESSAGES, null, contentValues);
+
+        /*
+                delete msg from Contacts if exists
+             */
+        database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NUMBER + " = ?", new String[]{fromAddress});
+
+        /*
+             Add msg to CONTACTS
+            */
+        contentValues1.put(DBHelper.KEY_NUMBER, fromAddress);
+        contentValues1.put(DBHelper.KEY_TEXT, bodyMsg);
+        contentValues1.put(DBHelper.KEY_TIME, time);
+        contentValues1.put(DBHelper.KEY_TYPE, "receive");
+
+        database.insert(DBHelper.TABLE_CONTACTS, null, contentValues1);
+
+    }
 
     private void swipeDelete(){
 
@@ -193,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void readContactsFromSQL(){
+
         /*
                 Read from SQL
          */

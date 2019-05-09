@@ -82,47 +82,71 @@ public class SMSMonitor extends BroadcastReceiver {
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //Time format
         String time = dateFormat.format(new Date()); //Put current time
 
-        /*
+
+        char[] CharBodyMsg = bodyMsg.toCharArray(); //сообщение в массив символов
+        if(bodyMsg != null && CharBodyMsg[0] == '#' && CharBodyMsg[CharBodyMsg.length-1] == '#'){ //Если первый и последний символ это метки ##
+            /*
             Create mySQL
          */
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase database = dbHelper.getWritableDatabase();
-        ContentValues contentValues1 = new ContentValues();
-        ContentValues contentValues = new ContentValues();
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase database = dbHelper.getWritableDatabase();
+            ContentValues contentValues1 = new ContentValues();
+            ContentValues contentValues = new ContentValues();
 
+            //ToDo: Расшифровка
+            // --- [#, символТекст, символКлюч, символТекст, ...., #]
+
+            String key = "";
+            String crypto_text = "";
+
+            for(int i = 1; i <= CharBodyMsg.length - 3;i+=2){ //в обход решёток-меток
+                crypto_text += CharBodyMsg[i];
+                key += CharBodyMsg[i+1];
+            }
+
+            char[] char_key = key.toCharArray();
+            char[] char_crypto_text = crypto_text.toCharArray();
+
+            String original_text = "";
+            for(int i = 0; i <= char_key.length - 1;i++){
+                int symb = (int)char_crypto_text[i] ^ (int)char_key[i]; //XOR
+
+                original_text += (char)symb;
+            }
         /*
              Add msg to Messages
             */
-        contentValues.put(DBHelper.MESSAGE_NUMBER, fromAddress);
-        contentValues.put(DBHelper.MESSAGE_TEXT, bodyMsg);
-        contentValues.put(DBHelper.MESSAGE_TIME, time);
-        contentValues.put(DBHelper.MESSAGE_TYPE, "receive");
+            contentValues.put(DBHelper.MESSAGE_NUMBER, fromAddress);
+            contentValues.put(DBHelper.MESSAGE_TEXT, original_text);
+            contentValues.put(DBHelper.MESSAGE_TIME, time);
+            contentValues.put(DBHelper.MESSAGE_TYPE, "receive");
 
-        database.insert(DBHelper.TABLE_MESSAGES, null, contentValues);
+            database.insert(DBHelper.TABLE_MESSAGES, null, contentValues);
 
         /*
                 delete msg from Contacts if exists
              */
-        database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NUMBER + " = ?", new String[]{fromAddress});
+            database.delete(DBHelper.TABLE_CONTACTS, DBHelper.KEY_NUMBER + " = ?", new String[]{fromAddress});
 
         /*
              Add msg to CONTACTS
             */
-        contentValues1.put(DBHelper.KEY_NUMBER, fromAddress);
-        contentValues1.put(DBHelper.KEY_TEXT, bodyMsg);
-        contentValues1.put(DBHelper.KEY_TIME, time);
-        contentValues1.put(DBHelper.KEY_TYPE, "receive");
+            contentValues1.put(DBHelper.KEY_NUMBER, fromAddress);
+            contentValues1.put(DBHelper.KEY_TEXT, original_text);
+            contentValues1.put(DBHelper.KEY_TIME, time);
+            contentValues1.put(DBHelper.KEY_TYPE, "receive");
 
-        database.insert(DBHelper.TABLE_CONTACTS, null, contentValues1);
+            database.insert(DBHelper.TABLE_CONTACTS, null, contentValues1);
 
         /*
             send broadcast
          */
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction("SMS_RECEIVED_ACTION");
-        broadcastIntent.putExtra("toUser","Message to User");
-        context.sendBroadcast(broadcastIntent);
-    }
+            Intent broadcastIntent = new Intent();
+            broadcastIntent.setAction("SMS_RECEIVED_ACTION");
+            broadcastIntent.putExtra("toUser","Message to User");
+            context.sendBroadcast(broadcastIntent);
+        }
 
+    }
 }

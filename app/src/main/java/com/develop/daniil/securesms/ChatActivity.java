@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -197,28 +198,10 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage(){
-//        Random random = new Random(System.currentTimeMillis());
-//        int mkey = random.nextInt(1000);
-//        int key = mkey % 26;  //ключ от 0 до 25
-//        String decryptMsg = "";
-//
-//
-//        SecureMessage secureMessage = new SecureMessage();
-//        text = secureMessage.encryptMessage(text, key); //шифр
 
-//        SecureMessage secureMessage = new SecureMessage();
-//        if(message.length() > 0)
-//            message = secureMessage.encryptMessage(message, key); //шифр
-//
-//        phone_editText.setText(message);
-//
-//        if(message.charAt(0) == '[' && message.indexOf(']') != -1) {  //дешифр
-//            decryptMsg = message.substring(1, message.indexOf(']'));             //достаю смс
-//            key = Integer.parseInt(message.substring( message.indexOf(']') + 1, message.length())); //достаю ключ
-//
-//            decryptMsg = secureMessage.decryptMessage(decryptMsg, key);
-//            msg_editText.setText(decryptMsg);
-//        }
+        //TODO: Шифрую сообщение на отправку
+
+        String crypto_text = "#" + secure(text) + "#"; //добавил метки ##
 
         //СЛОЖНАЯ ПРОВЕРКА СИСТЕМЫ, К БОЛЕЕ УСТАРЕВШЕЙ ДРУГОЙ ПОДХОД!!!
         if (ContextCompat.checkSelfPermission(ChatActivity.this,
@@ -235,13 +218,59 @@ public class ChatActivity extends AppCompatActivity {
 
         try {
             SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(number,null, text,null,null);
+            sms.sendTextMessage(number,null, crypto_text,null,null);
             Toast.makeText(ChatActivity.this,"Сообщение отправлено", Toast.LENGTH_SHORT).show();
         }
         catch (Throwable ignored) //суперкласс всех ошибок и исключений
         {
             Toast.makeText(ChatActivity.this,"Ошибка, повторите попытку", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private static String secure(String str) {
+
+        String key = genKey(str.length()); //генерация ключа
+        String CryptoStr = ""; //шифротекст
+        String out = "";
+
+        if(key != null){ //проверка на null
+
+            char[] CharStr = str.toCharArray(); //строку в массив символов
+            char[] CharKey = key.toCharArray();
+
+            for(int i = 0; i <= CharStr.length-1;i++){
+                int symb = (int)CharStr[i] ^ (int)CharKey[i]; //операция XOR между сообщением и ключом
+                CryptoStr += (char) symb;
+            }
+
+            char[] charCryptoStr = CryptoStr.toCharArray();
+            out = "";
+            for(int i = 0; i <= CharStr.length-1;i++){ //Прячу ключ  --- [символТекст, символКлюч, символТекст, ....]
+                out += charCryptoStr[i];
+                out += CharKey[i];
+            }
+
+        }
+
+
+        return out; //возврат зашифрованного сообщения с ключом внутри
+    }
+
+    private static String genKey(int len){
+
+        String key = "";
+        String alphabet = "ABCDEFGHIKLMNOPQRSTVXYZ1234567890"; //алфавит для ключа
+        int N = alphabet.length();
+        Random randomno = new Random();
+
+        for(int i = 0;  i <= len-1;i++){ //генерация случайной последовательности символов
+                                        //из алфавита, = длине исходного сообщения
+            int x = randomno.nextInt(N);
+
+            key += alphabet.charAt(x);
+        }
+
+        return key;
     }
 }
 

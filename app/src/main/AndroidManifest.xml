@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +32,7 @@
         </receiver>
 
         <activity android:name=".NumberActivity" />
-        <activity android:name=".ChatActivity" ></activity>
+        <activity android:name=".ChatActivity" />
     </application>
 
 </manifest>
